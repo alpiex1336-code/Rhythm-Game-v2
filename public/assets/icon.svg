@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Rhythm Drop icon">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#2a2562"/>
+      <stop offset="100%" stop-color="#0f0b26"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#7f4dff"/>
+      <stop offset="100%" stop-color="#39c3ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="url(#bg)"/>
+  <rect x="26" y="26" width="204" height="204" rx="38" fill="none" stroke="#8f88ff" stroke-opacity=".42" stroke-width="6"/>
+  <g fill="url(#glow)">
+    <path d="M73 73h42v28H97v40H73V73z"/>
+    <path d="M127 53h28v42h40v24h-40v40h-28V53z"/>
+    <path d="M183 73h-42v28h18v40h24V73z"/>
+    <path d="M127 203h28v-42h40v-24h-40V97h-28v106z"/>
+  </g>
+  <rect x="36" y="178" width="184" height="30" rx="12" fill="#ffffff" fill-opacity=".14"/>
+</svg>

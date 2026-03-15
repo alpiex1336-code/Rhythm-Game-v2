@@ -1,0 +1,19 @@
+{
+  "name": "rhythm-drop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "mkdir -p public/basic-pitch-model && cp node_modules/@spotify/basic-pitch/model/* public/basic-pitch-model/",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@spotify/basic-pitch": "^1.0.1"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0",
+    "vite-plugin-static-copy": "^2.1.0"
+  }
+}
