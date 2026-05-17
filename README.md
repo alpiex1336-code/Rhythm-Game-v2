@@ -46,10 +46,18 @@ v1 had limited features: external MP3 songs where keys did not match the melody,
 
 ## Quick Start
 
-After downloading this folder:
+Use a terminal **inside the project folder**. The folder name depends on how you got the code:
+
+- **Git clone** — GitHub creates a directory named exactly like the repo, e.g. `Rhythm-Game-v2`:
+  ```bash
+  git clone git@github.com:alpiex1336-code/Rhythm-Game-v2.git
+  cd Rhythm-Game-v2
+  ```
+- **ZIP download** from GitHub — after unzipping, the folder is usually `Rhythm-Game-v2-main` (repo name plus the default branch, e.g. `main`).
+
+Then:
 
 ```bash
-cd "$HOME/Downloads/rhythm-drop-v2-alpiex1336-code"
 npm install
 npm run build
 cd dist && python3 -m http.server 8000
@@ -58,7 +66,6 @@ cd dist && python3 -m http.server 8000
 Or for development (hot reload):
 
 ```bash
-cd "$HOME/Downloads/rhythm-drop-v2-alpiex1336-code"
 npm install
 npm run dev
 ```
