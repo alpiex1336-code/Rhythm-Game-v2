@@ -1,0 +1,17 @@
+{
+  "name": "Rhythm Drop",
+  "short_name": "RhythmDrop",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#120f2b",
+  "theme_color": "#120f2b",
+  "description": "Browser rhythm game with melody-aware charting and dynamic hit effects.",
+  "icons": [
+    {
+      "src": "./assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

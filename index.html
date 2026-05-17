@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rhythm Drop: a polished browser rhythm game with graded hits, song analysis, and dynamic effects." />
+  <meta name="theme-color" content="#120f2b" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <title>Rhythm Drop</title>
+  <link rel="stylesheet" href="./styles.css?v=64" />
+</head>
+<body>
+  <div class="background-glow"></div>
+  <div class="stars"></div>
+
+  <div class="scroll-wrap">
+  <main class="app">
+    <section id="homeScreen" class="screen active">
+      <h1>Rhythm Drop</h1>
+      <p class="subtitle">
+        Hit the keys in time — <strong>you play the melody</strong> (no background track). Each key plays the song’s note at that moment.
+      </p>
+
+      <div class="card">
+        <label for="songSelect">Choose Song</label>
+        <select id="songSelect" aria-label="Song selection"></select>
+        <p id="homeBestRow" class="home-best-row">Best: <span id="homeBestScore">0</span></p>
+        <p id="homeStatus" class="home-status">Ready to play.</p>
+        <div class="settings-row">
+          <label for="fxVolume">FX Volume</label>
+          <input id="fxVolume" type="range" min="0" max="1" step="0.01" value="0.9" aria-label="Effects volume" />
+        </div>
+        <div class="settings-row">
+          <label for="latencyOffset">Latency Offset</label>
+          <input id="latencyOffset" type="range" min="-120" max="180" step="1" value="0" aria-label="Latency offset in milliseconds" title="Compensate for audio/display delay. If hits feel early, add positive ms; if late, add negative." />
+          <span id="latencyValue" class="latency-value">0ms</span>
+        </div>
+        <div class="home-buttons">
+          <button id="importMidiBtn" class="secondary" type="button">Import MIDI</button>
+          <input id="importMidiInput" type="file" accept=".mid,.midi" hidden aria-label="Import MIDI file" />
+          <button id="importMp3Btn" class="secondary" type="button">Import MP3</button>
+          <input id="importMp3Input" type="file" accept=".mp3,.wav,.ogg,.flac" hidden aria-label="Import audio file" />
+          <button id="randomSongBtn" class="secondary">Pick Random Song</button>
+          <button id="deleteSongBtn" class="secondary" type="button" title="Remove selected imported song">Delete song</button>
+          <button id="startBtn" class="primary">Start Game</button>
+        </div>
+        <p class="import-hint">Import .mid or .mp3/.wav. MP3: use <strong>solo melody only</strong> (first load ~30s). For sheet music: (1) <a href="https://png2pdf.com/" target="_blank" rel="noopener">png2pdf.com</a> — PNG to PDF; (2) <a href="https://onlineconvertfree.com/convert-format/pdf-to-midi/" target="_blank" rel="noopener">onlineconvertfree.com</a> — PDF to MIDI; then import the .mid file.</p>
+      </div>
+
+      <div class="legend">
+        <span>Controls:</span>
+        <kbd>&larr;</kbd><kbd>G</kbd>
+        <kbd>&uarr;</kbd><kbd>H</kbd>
+        <kbd>&rarr;</kbd><kbd>J</kbd>
+        <kbd>&darr;</kbd><kbd>K</kbd>
+      </div>
+
+      <div class="how-to-play">
+        <button type="button" class="how-to-play-toggle" id="howToPlayToggle" aria-expanded="false" aria-controls="howToPlayContent">
+          <span class="how-to-play-toggle-text">How to Play</span>
+          <span class="how-to-play-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div id="howToPlayContent" class="how-to-play-content" hidden>
+          <ul>
+            <li><strong>Tap keys</strong> (←↑→↓ or G H J K): Hit when the note enters the zone. Press once per note. Left=G, Up=H, Right=J, Down=K.</li>
+            <li><strong>Hold keys</strong> (long notes): Press and hold from start until the tail passes the zone. Release too early = HOLD BREAK.</li>
+            <li><strong>Combo</strong>: Hit notes in a row for bonus points. Milestones at 10, 25, 50, 100.</li>
+            <li><strong>Pause</strong>: <kbd>Esc</kbd> to pause. <kbd>Esc</kbd> again to resume. Cooldown: 0.5s after pause, 1.2s after resume (prevents abuse).</li>
+            <li><strong>Retry</strong>: Press <kbd>R</kbd> when the result screen is shown.</li>
+            <li><strong>Import</strong>: MIDI or MP3 (solo melody only). Sheet music: PNG→PDF (<a href="https://png2pdf.com/" target="_blank" rel="noopener">png2pdf.com</a>) then PDF→MIDI (<a href="https://onlineconvertfree.com/convert-format/pdf-to-midi/" target="_blank" rel="noopener">onlineconvertfree</a>).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen">
+      <header class="hud">
+        <div>Song: <span id="currentSongName">-</span></div>
+        <div class="hud-score-cell">
+          <div class="hud-best-row">Best: <span id="hudBestScore">0</span></div>
+          <div class="hud-score-row">Score: <span id="scoreValue">0</span></div>
+        </div>
+        <div>Success: <span id="successValue">0%</span></div>
+        <div id="comboCell">Combo: <span id="comboValue">0</span> <span id="maxComboHint" class="max-combo-hint"></span></div>
+        <div id="escResumeHint" class="esc-resume-hint hidden" aria-live="polite"><kbd>Esc</kbd> to resume</div>
+      </header>
+      <div class="progress-bar-wrap" aria-hidden="true">
+        <div id="progressBar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+      <div id="playfield" class="playfield">
+        <div class="lane lane-left">←</div>
+        <div class="lane lane-up">↑</div>
+        <div class="lane lane-right">→</div>
+        <div class="lane lane-down">↓</div>
+        <div id="notesLayer" class="notes-layer"></div>
+        <div id="detectZone" class="detect-zone">
+          <span>Detected Zone</span>
+        </div>
+        <div id="signalOverlay" class="signal-overlay">
+          <div id="countdownOverlay" class="countdown-overlay hidden" aria-live="polite">3</div>
+          <div id="pauseOverlay" class="pause-overlay hidden" aria-live="polite">
+            <span>Paused</span>
+          </div>
+          <div id="comboMilestoneOverlay" class="combo-milestone-overlay hidden" aria-live="polite">COMBO x10!</div>
+          <div id="judgementCenterOverlay" class="judgement-center-overlay hidden" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="status-row">
+        <div id="judgementText" class="judgement judgement-hidden" aria-hidden="true">Ready</div>
+        <span class="game-hint"><kbd>Esc</kbd> pause</span>
+        <button id="backHomeBtn" class="secondary">Home</button>
+      </div>
+    </section>
+  </main>
+  </div>
+
+  <div id="resultModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h2>Song Finished!</h2>
+      <div class="result-grade-row">
+        <span id="finalGrade" class="final-grade" data-grade="—">—</span>
+        <span class="final-grade-label">—</span>
+      </div>
+      <p>Score: <strong id="finalScore">0</strong></p>
+      <p>Success: <strong id="finalPercent">0%</strong> · Max combo: <strong class="final-max-combo">0</strong></p>
+      <p>Best: <strong id="bestScore">0</strong> <span class="result-new-best">New best!</span></p>
+      <p class="grade-title">Grade breakdown</p>
+      <p id="gradeBreakdown">Perfect 0 | Great 0 | Good 0 | Bad 0 | Miss 0</p>
+      <div class="result-buttons">
+        <button id="retryBtn" class="primary">Retry</button>
+        <button id="homeBtn" class="secondary">Home</button>
+      </div>
+      <p class="result-hint"><kbd>R</kbd> to retry</p>
+    </div>
+  </div>
+  <script type="module" src="./script.js"></script>
+</body>
+</html>
