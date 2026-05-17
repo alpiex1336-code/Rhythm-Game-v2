@@ -1,4 +1,4 @@
-# Rhythm Drop v2 (alpiex)
+# Rhythm Drop v2 (alpiex1336-code)
 
 <p align="center">
   <img src="docs/readme/home.png" alt="Rhythm Drop home — song selection, controls, and How to Play" width="720" /><br /><br />
@@ -49,7 +49,7 @@ v1 had limited features: external MP3 songs where keys did not match the melody,
 After downloading this folder:
 
 ```bash
-cd "$HOME/Downloads/rhythm-drop-v2-alpiex"
+cd "$HOME/Downloads/rhythm-drop-v2-alpiex1336-code"
 npm install
 npm run build
 cd dist && python3 -m http.server 8000
@@ -58,7 +58,7 @@ cd dist && python3 -m http.server 8000
 Or for development (hot reload):
 
 ```bash
-cd "$HOME/Downloads/rhythm-drop-v2-alpiex"
+cd "$HOME/Downloads/rhythm-drop-v2-alpiex1336-code"
 npm install
 npm run dev
 ```

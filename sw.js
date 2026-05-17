@@ -1,4 +1,4 @@
-const CACHE_NAME = "rhythm-drop-v1-shell-v4";
+const CACHE_NAME = "rhythm-game-v2-alpiex1336-code-shell-v5";
 const APP_SHELL = [
   "./",
   "./index.html",
